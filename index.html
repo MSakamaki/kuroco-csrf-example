@@ -1,33 +1,98 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KUROCO CSRF TEST</title>
   <script src="./ajax.js"></script>
+  <style>
+    code {
+      background-color: rgb(236, 236, 236);
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
 </head>
-<body>
-  <div>
-    <header>HTML Form Request</header>
-    <article>捜査の説明</article>
-    <form action="http://www.foo.com" method="GET">
-        <div>
-          <label for="a">パラメタA</label>
-          <input name="a" id="a" value="value A" />
-        </div>
-        <div>
-          <label for="b">パラメタB</label>
-          <input name="b" id="b" value="value B" />
-        </div>
-        <div>
-          <button>Send Form</button>
-        </div>
-      </form>
-  </div>
+
+<body style="max-width: 780px; margin: 0 auto;">
+  <article>
+    <header>説明</header>
+    <p>
+      まず、kurocoにはログインできないと更新が行えないため、CORSセキュリティの無いAPIを使いログインする。
+    </p>
+  </article>
   <div style="margin-top: 32px;">
-    <header>Ajax API Request</header>
-    <article>操作の説明</article>
+    <div>
+      <label for="user">USER</label>
+      <input name="user" id="user" value="user-01" />
+    </div>
+    <div>
+      <label for="passwd">PASS</label>
+      <input name="passwd" id="passwd" type="password" />
+    </div>
+    <button onclick="login()">LOGIN</button>
+  </div>
+  <hr />
+  <div style="margin-top: 32px;">
+    <header>kurocoに保存されてるデータ</header>
+    <div id="feeds"></div>
+    <button onclick="getFeeds()">最新データ取得</button>
+  </div>
+  <hr />
+  <div style="margin-top: 32px;">
+    <header>HTML Form Request</header>
+    <article>
+      <header>説明</header>
+      <p>
+        HTML Formでは厳密に<a
+          href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#attr-enctype">formのenctypeは定義</a>されており<code>application/json</code>は送信できません。<br />
+        <small>補足: kurocoのAPIにて、コンテンツタイプが<code>application/json</code>ヘッダーではないため書き換えできない旨のエラーが戻り値として返却される</small>
+      </p>
+    </article>
+    <form action="https://bg-check.g.kuroco.app/rcms-api/1/feed/update/1" method="POST">
+      <div>
+        <label for="a">パラメタA</label>
+        <input name="a" id="a" value="value A" />
+      </div>
+      <div>
+        <label for="b">パラメタB</label>
+        <input name="b" id="b" value="value B" />
+      </div>
+      <div>
+        <button>Send Form</button>
+      </div>
+    </form>
+  </div>
+  <hr />
+  <div style="margin-top: 32px;">
+    <header>Javascript API Request</header>
+    <article style="margin-bottom: 32px;">
+      <header>説明</header>
+      <p>
+        異なるドメイン間でCookieの共用をするようなケースにて、<br />
+        <code>fetch</code>または<code>XMLHttpRequest</code>による<code>credentials=include</code>を用いたPOST通信を行う際、<br />
+        CORSの制約により意図しないドメインからの情報改竄は防げる。
+      </p>
+      <ol>
+        <li>管理画面でCORS設定の<code>CORS_ALLOW_ORIGIN</code>に<code>https://msakamaki.github.io</code>があることを確認してください。その後以下のSend
+          Ajaxを実行すると、データが更新されます。</li>
+        <li>管理画面でCORS設定の<code>CORS_ALLOW_ORIGIN</code>に<code>https://msakamaki.github.io</code>が無いことを確認してください。その後以下のSend
+          Ajaxを実行すると、CORSによりデータの改竄を防ぎます。</li>
+      </ol>
+      <small>補足: ブラウザの制限により、CORSエラーが発生し、データの変更ができないエラーがコンソールログに表示される。</small>
+    </article>
+    <div>
+      <label for="comment_id">コンテンツID</label>
+      <input name="comment_id" id="comment_id" value="1" />
+    </div>
+    <div>
+      <label for="message">コンテンツSUBJECT</label>
+      <input name="message" id="message" value="CSRF UPDATE" />
+    </div>
     <button onclick="onSubmit()">Send Ajax</button>
   </div>
+  <hr />
 </body>
+
 </html>
