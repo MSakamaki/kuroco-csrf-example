@@ -4,8 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KUROCO CSRF TEST</title>
+  <script src="./ajax.js"></script>
 </head>
 <body>
-  Hello World
+  <div>
+    <header>HTML Form Request</header>
+    <article>捜査の説明</article>
+    <form action="http://www.foo.com" method="GET">
+        <div>
+          <label for="a">パラメタA</label>
+          <input name="a" id="a" value="value A" />
+        </div>
+        <div>
+          <label for="b">パラメタB</label>
+          <input name="b" id="b" value="value B" />
+        </div>
+        <div>
+          <button>Send Form</button>
+        </div>
+      </form>
+  </div>
+  <div style="margin-top: 32px;">
+    <header>Ajax API Request</header>
+    <article>操作の説明</article>
+    <button onclick="onSubmit()">Send Ajax</button>
+  </div>
 </body>
 </html>
